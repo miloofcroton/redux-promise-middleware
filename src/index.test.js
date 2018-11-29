@@ -36,9 +36,11 @@ describe('thoonk, a popular addition to thunk', () => {
     store.dispatch(action);
 
     return promise
-      .then(() => expect(reducer.mock.calls[1][1]).toEqual({ type: 'LOAD_START' }))
-      .then(() => expect(reducer.mock.calls[2][1]).toEqual({ type: 'PROMISE_ACTION', payload: 'done' }))
-      .then(() => expect(reducer.mock.calls[3][1]).toEqual({ type: 'LOAD_END' }))
+      .then(() => {
+        expect(reducer.mock.calls[1][1]).toEqual({ type: 'LOAD_START' })
+        expect(reducer.mock.calls[2][1]).toEqual({ type: 'PROMISE_ACTION', payload: 'done' })
+        expect(reducer.mock.calls[3][1]).toEqual({ type: 'LOAD_END' })
+      });
   });
 
   test('if a promise errors, call LOAD_END and ERROR', () => {
