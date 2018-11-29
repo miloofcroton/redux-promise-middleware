@@ -16,10 +16,21 @@ describe('isPromise?', () => {
 
 });
 
-describe('thoonk, a popular alternative to thunk', () => {
+describe('thoonk, a popular addition to thunk', () => {
 
-  test('it works', () => {
-
+  test('if a non-promise is passed in, just call next(action)', () => {
+    const store = {
+      dispatch: jest.fn(),
+      getState: jest.fn()
+    };
+    const next = jest.fn();
+    const actionFn = jest.fn();
+    const action = {
+      payload: actionFn
+    };
+    thoonk(store)(next)(action);
+    expect(next.mock.calls).toHaveLength(1);
+    expect(actionFn.mock.calls).toHaveLength(0);
   });
 
 });

@@ -26,7 +26,7 @@
         "no-console": "warn",
         "indent": ["error", 2, { "SwitchCase": 1 }],
         "quotes": ["error", "single"],
-        "semi": ["", "always"],
+        "semi": ["error", "always"],
         "space-in-parens": ["error"],
         "space-infix-ops": "error",
         "object-curly-spacing": ["error", "always"],

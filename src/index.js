@@ -8,7 +8,7 @@ export const isPromise = payload => {
 
 export const thoonk = store => next => action => {
 
-
-
+  if(!isPromise(action.payload)) return next(action);
+  // next(action);
 
 };
