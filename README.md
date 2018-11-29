@@ -1,1 +1,1 @@
-# react-memoize
+# react-promise-middleware

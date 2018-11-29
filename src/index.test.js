@@ -1,16 +1,5 @@
 import { isPromise, thoonk } from './index';
-
-// jest.mock('./index.js', () => ({
-//   store: {
-//     dispatch: ({ type }) => {
-//       if(type === 'PROMISE_ACTION') return Promise.resolve('Did promise');
-//       else if(type === 'LOAD_START') return 'Loading';
-//       else if(type === 'LOAD_END') return 'Done Loading';
-//       else if(type === 'ERROR') return 'Error action';
-//       else return Promise.reject('404');
-//     }
-//   }
-// }));
+import { createStore, applyMiddleware } from 'redux';
 
 describe('isPromise?', () => {
 
@@ -31,41 +20,26 @@ describe('isPromise?', () => {
 describe('thoonk, a popular addition to thunk', () => {
 
   test('if a non-promise is passed in, just call next(action)', () => {
-    const store = {
-      dispatch: jest.fn(),
-      getState: jest.fn()
-    };
-    const next = jest.fn();
-    const actionFn = jest.fn();
-    const action = {
-      payload: actionFn
-    };
-    thoonk(store)(next)(action);
-    expect(next.mock.calls).toHaveLength(1);
-    expect(actionFn.mock.calls).toHaveLength(0);
+    const action = { type: 'ASDF' };
+    const reducer = jest.fn();
+    const store = createStore(reducer, {}, applyMiddleware(thoonk));
+    store.dispatch(action);
+
+    expect(reducer.mock.calls[1][1]).toEqual({ type: 'ASDF' });
   });
 
   test('if a promise is passed in, call PROMISE_ACTION and LOAD_END', () => {
-    const promiseFn = jest.fn();
-    const promise = () => new Promise((resolve, reject) => {
-      promiseFn();
-      resolve('done');
-    });
+    const promise = Promise.resolve('done');
+    const action = { type: 'PROMISE_ACTION', payload: promise };
+    const reducer = jest.fn();
+    const store = createStore(reducer, {}, applyMiddleware(thoonk));
+    store.dispatch(action);
 
-
-    // const store = {
-    //   dispatch: jest.fn(),
-    //   getState: jest.fn()
-    // };
-    // const next = jest.fn();
-    // const actionFn = jest.fn();
-    // const action = {
-    //   payload: actionFn
-    // };
-    // thoonk(store)(next)(action);
-    // expect(next.mock.calls).toHaveLength(1);
-    // expect(actionFn.mock.calls).toHaveLength(0);
-
+    return promise
+      .then(() => expect(reducer.mock.calls[1][1]).toEqual({ type: 'LOAD_START' }))
+      .then(() => expect(reducer.mock.calls[2][1]).toEqual({ type: 'PROMISE_ACTION', payload: 'done' }))
+      .then(() => expect(reducer.mock.calls[3][1]).toEqual({ type: 'LOAD_END' }))
+      .catch(err => console.log(err));
   });
 
   test('if a promise errors, call LOAD_END and ERROR', () => {

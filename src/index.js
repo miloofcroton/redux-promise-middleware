@@ -13,7 +13,7 @@ export const thoonk = store => next => action => {
 
   if(!isPromise(action.payload)) return next(action);
   store.dispatch({ type: 'LOAD_START' });
-  action.payload()
+  return action.payload
     .then(result => {
       store.dispatch({ type: 'PROMISE_ACTION', payload: result });
       store.dispatch({ type: 'LOAD_END' });
