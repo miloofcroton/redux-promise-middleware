@@ -39,11 +39,22 @@ describe('thoonk, a popular addition to thunk', () => {
       .then(() => expect(reducer.mock.calls[1][1]).toEqual({ type: 'LOAD_START' }))
       .then(() => expect(reducer.mock.calls[2][1]).toEqual({ type: 'PROMISE_ACTION', payload: 'done' }))
       .then(() => expect(reducer.mock.calls[3][1]).toEqual({ type: 'LOAD_END' }))
-      .catch(err => console.log(err));
   });
 
   test('if a promise errors, call LOAD_END and ERROR', () => {
+    const promise = Promise.reject('fail');
+    const action = { type: 'PROMISE_ACTION', payload: promise };
+    const reducer = jest.fn();
+    const store = createStore(reducer, {}, applyMiddleware(thoonk));
+    store.dispatch(action);
 
+    return promise
+      .then()
+      .catch(() => {
+        expect(reducer.mock.calls[1][1]).toEqual({ type: 'LOAD_START' });
+        expect(reducer.mock.calls[2][1]).toEqual({ type: 'LOAD_END' });
+        expect(reducer.mock.calls[3][1]).toEqual({ type: 'ERROR', payload: 'fail' });
+      });
   });
 
 });
